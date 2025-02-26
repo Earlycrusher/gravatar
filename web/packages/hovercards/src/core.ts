@@ -120,6 +120,7 @@ export type Options = Partial< {
 	onFetchProfileFailure: OnFetchProfileFailure;
 	onHovercardShown: OnHovercardShown;
 	onHovercardHidden: OnHovercardHidden;
+	onCanShowHovercard: ( hash: string ) => boolean;
 } >;
 
 interface HovercardRef {
@@ -149,6 +150,7 @@ export default class Hovercards {
 	_onFetchProfileFailure: OnFetchProfileFailure;
 	_onHovercardShown: OnHovercardShown;
 	_onHovercardHidden: OnHovercardHidden;
+	_canShowHovercard: ( hash: string ) => boolean;
 	_i18n: Record< string, string > = {};
 
 	// Variables
@@ -172,6 +174,7 @@ export default class Hovercards {
 		onFetchProfileFailure = () => {},
 		onHovercardShown = () => {},
 		onHovercardHidden = () => {},
+		onCanShowHovercard = () => true,
 		i18n = {},
 	}: Options = {} ) {
 		this._placement = placement;
@@ -188,6 +191,7 @@ export default class Hovercards {
 		this._onFetchProfileFailure = onFetchProfileFailure;
 		this._onHovercardShown = onHovercardShown;
 		this._onHovercardHidden = onHovercardHidden;
+		this._canShowHovercard = onCanShowHovercard;
 		this._i18n = i18n;
 	}
 
@@ -697,6 +701,11 @@ export default class Hovercards {
 	_showHovercard( { id, hash, params, ref }: HovercardRef ) {
 		const timeoutId = setTimeout( () => {
 			if ( dc.getElementById( id ) ) {
+				return;
+			}
+
+			// Let client decide if we can show the hovercard
+			if ( ! this._canShowHovercard( hash ) ) {
 				return;
 			}
 
