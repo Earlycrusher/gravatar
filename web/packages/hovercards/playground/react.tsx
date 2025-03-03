@@ -17,8 +17,15 @@ const props: HovercardsProps = {
 };
 
 function App() {
-	// eslint-disable-next-line no-console
-	const { attach } = useHovercards( { onFetchProfileSuccess: ( hash ) => console.log( hash ) } );
+	const { attach } = useHovercards( {
+		// eslint-disable-next-line no-console
+		onFetchProfileSuccess: ( hash ) => console.log( hash ),
+		onCanShowHovercard: ( hash ) => {
+			// eslint-disable-next-line no-console
+			console.log( 'Can show hovercard: ', hash );
+			return true;
+		},
+	} );
 	const containerRef = useRef( null );
 	const attacherRef = useRef( null );
 	const [ hashes, setHashes ] = useState( [

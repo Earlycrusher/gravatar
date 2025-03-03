@@ -9,6 +9,13 @@ addEventListener( 'DOMContentLoaded', () => {
 		placement: 'top',
 		// To test the empty about me case
 		myHash: '99c3338797c95c418d9996bd39931506',
+		onCanShowHovercard: ( hash ) => {
+			if ( hash === 'a2bb8d897bb538896708195dd9eb162f585654611c50a3a1c9a16a7b64f33270' ) {
+				return false;
+			}
+
+			return true;
+		},
 	};
 	const hovercards = new Hovercards( options );
 
