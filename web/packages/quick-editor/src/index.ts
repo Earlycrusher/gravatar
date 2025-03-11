@@ -2,8 +2,11 @@ export type {
 	Scope,
 	ProfileUpdatedType,
 	Open,
+	Close,
+	IsOpen,
 	OnProfileUpdated,
 	OnOpened,
+	OnClosed,
 	QuickEditorCoreOptions,
 } from './quick-editor-core';
 

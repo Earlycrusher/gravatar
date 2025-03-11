@@ -18,6 +18,8 @@ export type Scope = ( typeof ScopeList )[ number ][];
 export type ProfileUpdatedType = 'avatar_updated' | 'profile_updated';
 
 export type Open = ( email?: string ) => boolean;
+export type Close = () => void;
+export type IsOpen = () => boolean;
 
 export type OnProfileUpdated = ( type: ProfileUpdatedType ) => void;
 
@@ -107,13 +109,13 @@ export class GravatarQuickEditorCore {
 		return true;
 	};
 
-	close = () => {
+	close: Close = () => {
 		if ( this._window ) {
 			this._window.close();
 		}
 	};
 
-	isOpen: () => boolean = () => {
+	isOpen: IsOpen = () => {
 		return this._window !== null && ! this._window.closed;
 	};
 
