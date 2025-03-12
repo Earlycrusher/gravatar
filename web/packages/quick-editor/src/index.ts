@@ -1,12 +1,4 @@
-export type {
-	Scope,
-	ProfileUpdatedType,
-	Open,
-	OnProfileUpdated,
-	OnOpened,
-	QuickEditorCoreOptions,
-} from './quick-editor-core';
-
+export type * from './quick-editor-core';
 export type { QuickEditorOptions } from './quick-editor';
 
 export { default as GravatarQuickEditor } from './quick-editor';
