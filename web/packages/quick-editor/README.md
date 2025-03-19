@@ -128,6 +128,9 @@ type QuickEditorOptions = {
 - **`avatarRefreshDelay: number`**:
   The delay in milliseconds before the avatar image is refreshed after an update. This can help ensure any cache can be busted before the new image is displayed.
 
+- **`utm: string`**:
+  A code used to determine where the Quick Editor is being used.
+
 
 > While updating the avatar image, to bypass the browser's cache, the Quick Editor will add a `t` parameter with the current timestamp to the avatar URL.
 

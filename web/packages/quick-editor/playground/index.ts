@@ -22,6 +22,7 @@ document.addEventListener( 'DOMContentLoaded', () => {
 		email: 'joao.heringer@automattic.com',
 		scope: [ 'avatars', 'about' ],
 		locale: 'es',
+		utm: 'jetpack-comments',
 		onProfileUpdated: ( type: ProfileUpdatedType ) => {
 			// eslint-disable-next-line
 			console.log( type );
