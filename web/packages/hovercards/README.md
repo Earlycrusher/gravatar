@@ -313,7 +313,7 @@ document.getElementById( 'container' ).appendChild( hovercardSkeleton );
 
 ##### `(static) createHovercardError( avatarUrl: string, message: string, options?: { additionalClass?: string; avatarAlt?: string; additionalMessage?: string } ): HTMLDivElement`
 
-This method generates an error hovercard element. It accepts the `avatarUrl` parameter, which represents the URL of the avatar image, the `message` parameter, which represents the error message, and an optional options object that can include properties such as [`additionalClass`](#additionalclass-string), [`avatarAlt`](#avataralt-string) (default: `'Avatar'`) and more. It's useful when you want to display an error message when fetching the Gravatar profile fails.
+This method generates an error hovercard element. It accepts the `avatarUrl` parameter, which represents the URL of the avatar image, the `message` parameter, which represents the error message, and an optional options object that can include properties such as [`additionalClass`](#additionalclass-string), [`avatarAlt`](#avataralt-string) (default: `'Avatar'`), among others. It's useful when you want to display an error message when fetching the Gravatar profile fails.
 
 ```js
 import { Hovercards } from '@gravatar-com/hovercards';
