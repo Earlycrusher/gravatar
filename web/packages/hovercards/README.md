@@ -511,6 +511,12 @@ The following phrases are used:
 - `Internal Server Error.`
 - `Is this you?`
 - `Claim your free profile.`
+- `Email`
+- `Home Phone`
+- `Work Phone`
+- `Cell Phone`
+- `Contact Form`
+- `Calendar`
 
 The `i18n` option is an object that maps from the English text to the language of your choice (even another English phrase, if you wish to change the text).
 

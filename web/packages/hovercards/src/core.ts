@@ -370,7 +370,7 @@ export default class Hovercards {
 				contactsDrawer = Hovercards._createDrawer(
 					'contact',
 					__t( i18n, 'Contact' ),
-					Hovercards._createContactDrawerContent( nonEmptyContacts )
+					Hovercards._createContactDrawerContent( nonEmptyContacts, { i18n } )
 				);
 			}
 
@@ -413,7 +413,7 @@ export default class Hovercards {
 				}
 				<div class="gravatar-hovercard__social-links">
 					<a class="gravatar-hovercard__social-link" href="${ trackedProfileUrl }" target="_blank" data-service-name="gravatar">
-						<img class="gravatar-hovercard__social-icon" src="https://secure.gravatar.com/icons/gravatar.svg" width="32" height="32" alt="Gravatar" />
+						<img class="gravatar-hovercard__social-icon" src="https://s.gravatar.com/icons/gravatar.svg" width="32" height="32" alt="Gravatar" />
 					</a>
 					${ renderSocialLinks }
 				</div>
@@ -539,11 +539,16 @@ export default class Hovercards {
 	/**
 	 * Creates the contact drawer content.
 	 *
-	 * @param {Record< string, any >[]} contactsData - The user's contact data.
-	 * @return {string}                              - The contact drawer content.
+	 * @param {Record< string, any >[]} contactsData   - The user's contact data.
+	 * @param {Object}                  [options]      - Optional parameters for the contact drawer.
+	 * @param {Record<string, string>}  [options.i18n] - The i18n object.
+	 * @return {string}                               - The contact drawer content.
 	 * @private
 	 */
-	private static _createContactDrawerContent( contactsData: Record< string, any >[] ): string {
+	private static _createContactDrawerContent(
+		contactsData: Record< string, any >[],
+		{ i18n = {} }: { i18n?: Record< string, string > } = {}
+	): string {
 		const icons: Record< string, string > = {
 			email: 'icons/mail.svg',
 			home_phone: 'icons/home-phone.svg',
@@ -552,6 +557,15 @@ export default class Hovercards {
 			contact_form: 'icons/envelope.svg',
 			calendar: 'icons/calendar.svg',
 			calendly: 'icons/calendly.svg',
+		};
+
+		const labels: Record< string, string > = {
+			email: __t( i18n, 'Email' ),
+			home_phone: __t( i18n, 'Home Phone' ),
+			work_phone: __t( i18n, 'Work Phone' ),
+			cell_phone: __t( i18n, 'Cell Phone' ),
+			contact_form: __t( i18n, 'Contact Form' ),
+			calendar: __t( i18n, 'Calendar' ),
 		};
 
 		const getUrl = ( type: string, value: string ) => {
@@ -582,11 +596,11 @@ export default class Hovercards {
 						class="gravatar-hovercard__drawer-item-icon"
 						width="24"
 						height="24"
-						src="https://secure.gravatar.com/${ icons[ key ] }"
+						src="https://s.gravatar.com/${ icons[ key ] }"
 						alt=""
 					>
 					<div class="gravatar-hovercard__drawer-item-info">
-						<span class="gravatar-hovercard__drawer-item-label">${ key.replace( '_', ' ' ) }</span>
+						<span class="gravatar-hovercard__drawer-item-label">${ labels[ key ] ?? key.replace( '_', ' ' ) }</span>
 						<span class="gravatar-hovercard__drawer-item-text">${ text }</span>
 					</div>
 				</li>
@@ -609,7 +623,7 @@ export default class Hovercards {
 		payments.links?.forEach( ( item ) => {
 			items.push( `
 				<li class="gravatar-hovercard__drawer-item">
-					<img class="gravatar-hovercard__drawer-item-icon" width="24" height="24" src="https://secure.gravatar.com/icons/link.svg" alt="">
+					<img class="gravatar-hovercard__drawer-item-icon" width="24" height="24" src="https://s.gravatar.com/icons/link.svg" alt="">
 					<div class="gravatar-hovercard__drawer-item-info">
 						<span class="gravatar-hovercard__drawer-item-label">${ item.label }</span>
 						<span class="gravatar-hovercard__drawer-item-text">
@@ -625,7 +639,7 @@ export default class Hovercards {
 		payments.crypto_wallets?.forEach( ( item ) => {
 			items.push( `
 				<li class="gravatar-hovercard__drawer-item">
-					<img class="gravatar-hovercard__drawer-item-icon" width="24" height="24" src="https://secure.gravatar.com/icons/link.svg" alt="">
+					<img class="gravatar-hovercard__drawer-item-icon" width="24" height="24" src="https://s.gravatar.com/icons/link.svg" alt="">
 					<div class="gravatar-hovercard__drawer-item-info">
 						<span class="gravatar-hovercard__drawer-item-label">${ item.label }</span>
 						<span class="gravatar-hovercard__drawer-item-text">${ item.address }</span>
