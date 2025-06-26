@@ -112,6 +112,7 @@ export type Options = Partial< {
 	offset: number;
 	autoFlip: boolean;
 	autoShift: boolean;
+	hideOnTargetClick: boolean;
 	delayToShow: number;
 	delayToHide: number;
 	additionalClass: string;
@@ -133,6 +134,7 @@ interface HovercardRef {
 	ref: HTMLElement;
 	onEnter: ( e: MouseEvent ) => void;
 	onLeave: ( e: MouseEvent ) => void;
+	onClick: ( e: MouseEvent ) => void;
 }
 
 const BASE_API_URL = 'https://api.gravatar.com/v3/profiles';
@@ -145,6 +147,7 @@ export default class Hovercards {
 	_offset: number;
 	_autoFlip: boolean;
 	_autoShift: boolean;
+	_hideOnTargetClick: boolean;
 	_delayToShow: number;
 	_delayToHide: number;
 	_additionalClass: string;
@@ -166,9 +169,10 @@ export default class Hovercards {
 
 	constructor( {
 		placement = 'right-start',
+		offset = 10,
 		autoFlip = true,
 		autoShift = true,
-		offset = 10,
+		hideOnTargetClick = false,
 		delayToShow = 500,
 		delayToHide = 300,
 		additionalClass = '',
@@ -183,9 +187,10 @@ export default class Hovercards {
 		i18n = {},
 	}: Options = {} ) {
 		this._placement = placement;
+		this._offset = offset;
 		this._autoFlip = autoFlip;
 		this._autoShift = autoShift;
-		this._offset = offset;
+		this._hideOnTargetClick = hideOnTargetClick;
 		this._delayToShow = delayToShow;
 		this._delayToHide = delayToHide;
 		this._additionalClass = additionalClass;
@@ -291,6 +296,7 @@ export default class Hovercards {
 				...hovercardRef,
 				onEnter: ( e: MouseEvent ) => this._handleMouseEnter( e, hovercardRef ),
 				onLeave: ( e: MouseEvent ) => this._handleMouseLeave( e, hovercardRef ),
+				onClick: () => this._handleMouseClick( hovercardRef ),
 			} ) );
 
 		return this._hovercardRefs;
@@ -881,11 +887,12 @@ export default class Hovercards {
 	/**
 	 * Waits for a specified delay and hides the hovercard.
 	 *
-	 * @param {string} id - The ID associated with the hovercard.
+	 * @param {string} id      - The ID associated with the hovercard.
+	 * @param {number} [delay] - The delay in milliseconds before hiding the hovercard.
 	 * @return {void}
 	 * @private
 	 */
-	_hideHovercard( id: string ): void {
+	_hideHovercard( id: string, delay = this._delayToHide ): void {
 		const timeoutId = setTimeout( () => {
 			const hovercard = dc.getElementById( id );
 
@@ -893,7 +900,7 @@ export default class Hovercards {
 				hovercard.remove();
 				this._onHovercardHidden( id, hovercard as HTMLDivElement );
 			}
-		}, this._delayToHide );
+		}, delay );
 
 		this._hideHovercardTimeoutIds.set( id, timeoutId );
 	}
@@ -939,6 +946,23 @@ export default class Hovercards {
 	}
 
 	/**
+	 * Handles the click event for hovercard refs.
+	 *
+	 * @param {HovercardRef} hovercardRef    - The hovercard ref object.
+	 * @param {string}       hovercardRef.id - The ID associated with the hovercard.
+	 * @return {void}
+	 * @private
+	 */
+	_handleMouseClick( { id }: HovercardRef ): void {
+		if ( 'ontouchstart' in dc || ! this._hideOnTargetClick ) {
+			return;
+		}
+
+		clearInterval( this._showHovercardTimeoutIds.get( id ) );
+		this._hideHovercard( id, 0 );
+	}
+
+	/**
 	 * Attaches event listeners on or within the target element.
 	 *
 	 * @param {HTMLElement} target                    - The target element to set.
@@ -957,6 +981,7 @@ export default class Hovercards {
 		this._queryHovercardRefs( target, dataAttributeName, ignoreSelector ).forEach( ( hovercardRef ) => {
 			hovercardRef.ref.addEventListener( 'mouseenter', hovercardRef.onEnter );
 			hovercardRef.ref.addEventListener( 'mouseleave', hovercardRef.onLeave );
+			hovercardRef.ref.addEventListener( 'click', hovercardRef.onClick );
 		} );
 	};
 
@@ -973,6 +998,11 @@ export default class Hovercards {
 		this._hovercardRefs.forEach( ( hovercardRef ) => {
 			hovercardRef.ref.removeEventListener( 'mouseenter', hovercardRef.onEnter );
 			hovercardRef.ref.removeEventListener( 'mouseleave', hovercardRef.onLeave );
+			hovercardRef.ref.removeEventListener( 'click', hovercardRef.onClick );
+
+			// Clear the hovercard show timeout and remove the hovercard element.
+			clearInterval( this._showHovercardTimeoutIds.get( hovercardRef.id ) );
+			dc.getElementById( hovercardRef.id )?.remove();
 		} );
 
 		this._hovercardRefs = [];
