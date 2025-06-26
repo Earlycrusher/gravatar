@@ -18,6 +18,9 @@ Enhance your web applications with Gravatar Hovercards. Display user avatars and
 ### [Gravatar Quick Editor](web/packages/quick-editor)
 Gravatar Quick Editor is a JavaScript library that allows users to integrate the Gravatar Quick Editor into their web applications, enabling easy editing of Gravatar profiles via a popup window.
 
+### [Gravatar MCP Server](https://github.com/Automattic/mcp-server-gravatar)
+Include Gravatar Profiles and Avatars in Agenic workflows using the [Model Context Protocol](https://modelcontextprotocol.io/introduction).
+
 ## Join Our Community
 Together, we are building the open web. Your contributions and feedback are vital to the growth and improvement of Gravatar. Here’s how you can get involved:
 
