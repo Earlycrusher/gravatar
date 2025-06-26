@@ -206,10 +206,10 @@ export default class Hovercards {
 	 * @param {HTMLElement} target            - The element to query.
 	 * @param {string}      dataAttributeName - Data attribute name associated with Gravatar hashes.
 	 * @param {string}      [ignoreSelector]  - The selector to ignore certain elements.
-	 * @return {HTMLElement[]}                - The queried hovercard refs.
+	 * @return {HovercardRef[]}               - The queried hovercard refs.
 	 * @private
 	 */
-	_queryHovercardRefs( target: HTMLElement, dataAttributeName: string, ignoreSelector?: string ) {
+	_queryHovercardRefs( target: HTMLElement, dataAttributeName: string, ignoreSelector?: string ): HovercardRef[] {
 		let refs: HTMLElement[] = [];
 		const camelAttrName = dataAttributeName.replace( /-([a-z])/g, ( g ) => g[ 1 ].toUpperCase() );
 		const ignoreRefs = ignoreSelector ? Array.from( dc.querySelectorAll( ignoreSelector ) ) : [];
@@ -306,7 +306,10 @@ export default class Hovercards {
 	 * @param {Object}      [options.i18n]            - The i18n object.
 	 * @return {HTMLDivElement}                       - The created hovercard element.
 	 */
-	static createHovercard: CreateHovercard = ( profileData, { additionalClass, myHash, i18n = {} } = {} ) => {
+	static createHovercard: CreateHovercard = (
+		profileData,
+		{ additionalClass, myHash, i18n = {} } = {}
+	): HTMLDivElement => {
 		const {
 			hash,
 			avatarUrl,
@@ -658,7 +661,7 @@ export default class Hovercards {
 	 * @param {string} [options.additionalClass] - Additional CSS class for the skeleton hovercard.
 	 * @return {HTMLDivElement}                  - The created skeleton hovercard element.
 	 */
-	static createHovercardSkeleton: CreateHovercardSkeleton = ( { additionalClass } = {} ) => {
+	static createHovercardSkeleton: CreateHovercardSkeleton = ( { additionalClass } = {} ): HTMLDivElement => {
 		const hovercard = dc.createElement( 'div' );
 		hovercard.className = `gravatar-hovercard gravatar-hovercard--skeleton${
 			additionalClass ? ` ${ additionalClass }` : ''
@@ -699,7 +702,7 @@ export default class Hovercards {
 		avatarUrl,
 		message,
 		{ avatarAlt = 'Avatar', additionalClass, additionalMessage = '' } = {}
-	) => {
+	): HTMLDivElement => {
 		const hovercard = dc.createElement( 'div' );
 		hovercard.className = `gravatar-hovercard gravatar-hovercard--error${
 			additionalClass ? ` ${ additionalClass }` : ''
@@ -726,7 +729,7 @@ export default class Hovercards {
 	 * @return {void}
 	 * @private
 	 */
-	_showHovercard( { id, hash, params, ref }: HovercardRef ) {
+	_showHovercard( { id, hash, params, ref }: HovercardRef ): void {
 		const timeoutId = setTimeout( () => {
 			if ( dc.getElementById( id ) ) {
 				return;
@@ -882,7 +885,7 @@ export default class Hovercards {
 	 * @return {void}
 	 * @private
 	 */
-	_hideHovercard( id: string ) {
+	_hideHovercard( id: string ): void {
 		const timeoutId = setTimeout( () => {
 			const hovercard = dc.getElementById( id );
 
@@ -898,12 +901,12 @@ export default class Hovercards {
 	/**
 	 * Handles the mouseenter event for hovercard refs.
 	 *
-	 * @param {MouseEvent} e            - The mouseenter event object.
-	 * @param              hovercardRef - The hovercard ref object.
+	 * @param {MouseEvent}   e            - The mouseenter event object.
+	 * @param {HovercardRef} hovercardRef - The hovercard ref object.
 	 * @return {void}
 	 * @private
 	 */
-	_handleMouseEnter( e: MouseEvent, hovercardRef: HovercardRef ) {
+	_handleMouseEnter( e: MouseEvent, hovercardRef: HovercardRef ): void {
 		if ( 'ontouchstart' in dc ) {
 			return;
 		}
@@ -918,13 +921,13 @@ export default class Hovercards {
 	/**
 	 * Handles the mouseleave event for hovercard refs.
 	 *
-	 * @param {MouseEvent} e               - The mouseleave event object.
-	 * @param              hovercardRef    - The hovercard ref object.
-	 * @param              hovercardRef.id - The ID associated with the hovercard.
+	 * @param {MouseEvent}   e               - The mouseleave event object.
+	 * @param {HovercardRef} hovercardRef    - The hovercard ref object.
+	 * @param {string}       hovercardRef.id - The ID associated with the hovercard.
 	 * @return {void}
 	 * @private
 	 */
-	_handleMouseLeave( e: MouseEvent, { id }: HovercardRef ) {
+	_handleMouseLeave( e: MouseEvent, { id }: HovercardRef ): void {
 		if ( 'ontouchstart' in dc ) {
 			return;
 		}
@@ -940,11 +943,11 @@ export default class Hovercards {
 	 *
 	 * @param {HTMLElement} target                    - The target element to set.
 	 * @param {Object}      [options={}]              - The optional parameters.
-	 * @param               options.dataAttributeName - Data attribute name associated with Gravatar hashes.
-	 * @param               options.ignoreSelector    - The selector to ignore certain elements.
+	 * @param {string}      options.dataAttributeName - Data attribute name associated with Gravatar hashes.
+	 * @param {string}      options.ignoreSelector    - The selector to ignore certain elements.
 	 * @return {void}
 	 */
-	attach: Attach = ( target, { dataAttributeName = 'gravatar-hash', ignoreSelector } = {} ) => {
+	attach: Attach = ( target, { dataAttributeName = 'gravatar-hash', ignoreSelector } = {} ): void => {
 		if ( ! target ) {
 			return;
 		}
@@ -962,7 +965,7 @@ export default class Hovercards {
 	 *
 	 * @return {void}
 	 */
-	detach: Detach = () => {
+	detach: Detach = (): void => {
 		if ( ! this._hovercardRefs.length ) {
 			return;
 		}
