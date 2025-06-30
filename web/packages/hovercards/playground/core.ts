@@ -9,6 +9,7 @@ addEventListener( 'DOMContentLoaded', () => {
 		placement: 'top',
 		// To test the empty about me case
 		myHash: '99c3338797c95c418d9996bd39931506',
+		hideOnTargetClick: true,
 		onCanShowHovercard: ( hash ) => {
 			if ( hash === 'a2bb8d897bb538896708195dd9eb162f585654611c50a3a1c9a16a7b64f33270' ) {
 				return false;
@@ -178,6 +179,11 @@ addEventListener( 'DOMContentLoaded', () => {
 			}
 		)
 	);
+
+	// To test detach
+	document.getElementById( 'detach' )?.addEventListener( 'click', () => {
+		hovercards.detach();
+	} );
 
 	// To test hovercard skeleton
 	document.getElementById( 'hovercard-skeleton' )?.appendChild( Hovercards.createHovercardSkeleton() );

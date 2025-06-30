@@ -1,7 +1,7 @@
 /* eslint-disable import/no-unresolved */
 
 import { createRoot } from 'react-dom/client';
-import React, { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 import type { HovercardsProps } from '../dist/index.react.d';
 import { useHovercards, Hovercards } from '../dist/index.react';
@@ -11,6 +11,7 @@ const props: HovercardsProps = {
 	// attach: document.body,
 	// placement: 'top',
 	// ignoreSelector: '#grav-img-1',
+	hideOnTargetClick: true,
 	i18n: {
 		'View profile →': 'Voir le profil →',
 	},
@@ -18,6 +19,7 @@ const props: HovercardsProps = {
 
 function App() {
 	const { attach } = useHovercards( {
+		hideOnTargetClick: true,
 		// eslint-disable-next-line no-console
 		onFetchProfileSuccess: ( hash ) => console.log( hash ),
 		onCanShowHovercard: ( hash ) => {

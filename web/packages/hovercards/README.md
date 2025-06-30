@@ -187,6 +187,10 @@ Determines whether the hovercard's placement should automatically flip when ther
 
 Determines whether the hovercard's placement should automatically shift when there is not enough display space.
 
+##### `hideOnTargetClick: boolean = false`
+
+Hides the hovercard when its trigger element is clicked.
+
 ##### `offset: number = 10`
 
 The offset of the hovercard relative to the target element, in pixels.

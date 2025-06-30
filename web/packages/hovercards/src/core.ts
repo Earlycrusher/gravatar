@@ -112,6 +112,7 @@ export type Options = Partial< {
 	offset: number;
 	autoFlip: boolean;
 	autoShift: boolean;
+	hideOnTargetClick: boolean;
 	delayToShow: number;
 	delayToHide: number;
 	additionalClass: string;
@@ -133,6 +134,7 @@ interface HovercardRef {
 	ref: HTMLElement;
 	onEnter: ( e: MouseEvent ) => void;
 	onLeave: ( e: MouseEvent ) => void;
+	onClick: ( e: MouseEvent ) => void;
 }
 
 const BASE_API_URL = 'https://api.gravatar.com/v3/profiles';
@@ -145,6 +147,7 @@ export default class Hovercards {
 	_offset: number;
 	_autoFlip: boolean;
 	_autoShift: boolean;
+	_hideOnTargetClick: boolean;
 	_delayToShow: number;
 	_delayToHide: number;
 	_additionalClass: string;
@@ -166,9 +169,10 @@ export default class Hovercards {
 
 	constructor( {
 		placement = 'right-start',
+		offset = 10,
 		autoFlip = true,
 		autoShift = true,
-		offset = 10,
+		hideOnTargetClick = false,
 		delayToShow = 500,
 		delayToHide = 300,
 		additionalClass = '',
@@ -183,9 +187,10 @@ export default class Hovercards {
 		i18n = {},
 	}: Options = {} ) {
 		this._placement = placement;
+		this._offset = offset;
 		this._autoFlip = autoFlip;
 		this._autoShift = autoShift;
-		this._offset = offset;
+		this._hideOnTargetClick = hideOnTargetClick;
 		this._delayToShow = delayToShow;
 		this._delayToHide = delayToHide;
 		this._additionalClass = additionalClass;
@@ -206,10 +211,10 @@ export default class Hovercards {
 	 * @param {HTMLElement} target            - The element to query.
 	 * @param {string}      dataAttributeName - Data attribute name associated with Gravatar hashes.
 	 * @param {string}      [ignoreSelector]  - The selector to ignore certain elements.
-	 * @return {HTMLElement[]}                - The queried hovercard refs.
+	 * @return {HovercardRef[]}               - The queried hovercard refs.
 	 * @private
 	 */
-	_queryHovercardRefs( target: HTMLElement, dataAttributeName: string, ignoreSelector?: string ) {
+	_queryHovercardRefs( target: HTMLElement, dataAttributeName: string, ignoreSelector?: string ): HovercardRef[] {
 		let refs: HTMLElement[] = [];
 		const camelAttrName = dataAttributeName.replace( /-([a-z])/g, ( g ) => g[ 1 ].toUpperCase() );
 		const ignoreRefs = ignoreSelector ? Array.from( dc.querySelectorAll( ignoreSelector ) ) : [];
@@ -291,6 +296,7 @@ export default class Hovercards {
 				...hovercardRef,
 				onEnter: ( e: MouseEvent ) => this._handleMouseEnter( e, hovercardRef ),
 				onLeave: ( e: MouseEvent ) => this._handleMouseLeave( e, hovercardRef ),
+				onClick: () => this._handleMouseClick( hovercardRef ),
 			} ) );
 
 		return this._hovercardRefs;
@@ -306,7 +312,10 @@ export default class Hovercards {
 	 * @param {Object}      [options.i18n]            - The i18n object.
 	 * @return {HTMLDivElement}                       - The created hovercard element.
 	 */
-	static createHovercard: CreateHovercard = ( profileData, { additionalClass, myHash, i18n = {} } = {} ) => {
+	static createHovercard: CreateHovercard = (
+		profileData,
+		{ additionalClass, myHash, i18n = {} } = {}
+	): HTMLDivElement => {
 		const {
 			hash,
 			avatarUrl,
@@ -658,7 +667,7 @@ export default class Hovercards {
 	 * @param {string} [options.additionalClass] - Additional CSS class for the skeleton hovercard.
 	 * @return {HTMLDivElement}                  - The created skeleton hovercard element.
 	 */
-	static createHovercardSkeleton: CreateHovercardSkeleton = ( { additionalClass } = {} ) => {
+	static createHovercardSkeleton: CreateHovercardSkeleton = ( { additionalClass } = {} ): HTMLDivElement => {
 		const hovercard = dc.createElement( 'div' );
 		hovercard.className = `gravatar-hovercard gravatar-hovercard--skeleton${
 			additionalClass ? ` ${ additionalClass }` : ''
@@ -699,7 +708,7 @@ export default class Hovercards {
 		avatarUrl,
 		message,
 		{ avatarAlt = 'Avatar', additionalClass, additionalMessage = '' } = {}
-	) => {
+	): HTMLDivElement => {
 		const hovercard = dc.createElement( 'div' );
 		hovercard.className = `gravatar-hovercard gravatar-hovercard--error${
 			additionalClass ? ` ${ additionalClass }` : ''
@@ -726,7 +735,7 @@ export default class Hovercards {
 	 * @return {void}
 	 * @private
 	 */
-	_showHovercard( { id, hash, params, ref }: HovercardRef ) {
+	_showHovercard( { id, hash, params, ref }: HovercardRef ): void {
 		const timeoutId = setTimeout( () => {
 			if ( dc.getElementById( id ) ) {
 				return;
@@ -878,11 +887,12 @@ export default class Hovercards {
 	/**
 	 * Waits for a specified delay and hides the hovercard.
 	 *
-	 * @param {string} id - The ID associated with the hovercard.
+	 * @param {string} id      - The ID associated with the hovercard.
+	 * @param {number} [delay] - The delay in milliseconds before hiding the hovercard.
 	 * @return {void}
 	 * @private
 	 */
-	_hideHovercard( id: string ) {
+	_hideHovercard( id: string, delay = this._delayToHide ): void {
 		const timeoutId = setTimeout( () => {
 			const hovercard = dc.getElementById( id );
 
@@ -890,7 +900,7 @@ export default class Hovercards {
 				hovercard.remove();
 				this._onHovercardHidden( id, hovercard as HTMLDivElement );
 			}
-		}, this._delayToHide );
+		}, delay );
 
 		this._hideHovercardTimeoutIds.set( id, timeoutId );
 	}
@@ -898,12 +908,12 @@ export default class Hovercards {
 	/**
 	 * Handles the mouseenter event for hovercard refs.
 	 *
-	 * @param {MouseEvent} e            - The mouseenter event object.
-	 * @param              hovercardRef - The hovercard ref object.
+	 * @param {MouseEvent}   e            - The mouseenter event object.
+	 * @param {HovercardRef} hovercardRef - The hovercard ref object.
 	 * @return {void}
 	 * @private
 	 */
-	_handleMouseEnter( e: MouseEvent, hovercardRef: HovercardRef ) {
+	_handleMouseEnter( e: MouseEvent, hovercardRef: HovercardRef ): void {
 		if ( 'ontouchstart' in dc ) {
 			return;
 		}
@@ -918,13 +928,13 @@ export default class Hovercards {
 	/**
 	 * Handles the mouseleave event for hovercard refs.
 	 *
-	 * @param {MouseEvent} e               - The mouseleave event object.
-	 * @param              hovercardRef    - The hovercard ref object.
-	 * @param              hovercardRef.id - The ID associated with the hovercard.
+	 * @param {MouseEvent}   e               - The mouseleave event object.
+	 * @param {HovercardRef} hovercardRef    - The hovercard ref object.
+	 * @param {string}       hovercardRef.id - The ID associated with the hovercard.
 	 * @return {void}
 	 * @private
 	 */
-	_handleMouseLeave( e: MouseEvent, { id }: HovercardRef ) {
+	_handleMouseLeave( e: MouseEvent, { id }: HovercardRef ): void {
 		if ( 'ontouchstart' in dc ) {
 			return;
 		}
@@ -936,15 +946,32 @@ export default class Hovercards {
 	}
 
 	/**
+	 * Handles the click event for hovercard refs.
+	 *
+	 * @param {HovercardRef} hovercardRef    - The hovercard ref object.
+	 * @param {string}       hovercardRef.id - The ID associated with the hovercard.
+	 * @return {void}
+	 * @private
+	 */
+	_handleMouseClick( { id }: HovercardRef ): void {
+		if ( 'ontouchstart' in dc || ! this._hideOnTargetClick ) {
+			return;
+		}
+
+		clearInterval( this._showHovercardTimeoutIds.get( id ) );
+		this._hideHovercard( id, 0 );
+	}
+
+	/**
 	 * Attaches event listeners on or within the target element.
 	 *
 	 * @param {HTMLElement} target                    - The target element to set.
 	 * @param {Object}      [options={}]              - The optional parameters.
-	 * @param               options.dataAttributeName - Data attribute name associated with Gravatar hashes.
-	 * @param               options.ignoreSelector    - The selector to ignore certain elements.
+	 * @param {string}      options.dataAttributeName - Data attribute name associated with Gravatar hashes.
+	 * @param {string}      options.ignoreSelector    - The selector to ignore certain elements.
 	 * @return {void}
 	 */
-	attach: Attach = ( target, { dataAttributeName = 'gravatar-hash', ignoreSelector } = {} ) => {
+	attach: Attach = ( target, { dataAttributeName = 'gravatar-hash', ignoreSelector } = {} ): void => {
 		if ( ! target ) {
 			return;
 		}
@@ -954,6 +981,7 @@ export default class Hovercards {
 		this._queryHovercardRefs( target, dataAttributeName, ignoreSelector ).forEach( ( hovercardRef ) => {
 			hovercardRef.ref.addEventListener( 'mouseenter', hovercardRef.onEnter );
 			hovercardRef.ref.addEventListener( 'mouseleave', hovercardRef.onLeave );
+			hovercardRef.ref.addEventListener( 'click', hovercardRef.onClick );
 		} );
 	};
 
@@ -962,7 +990,7 @@ export default class Hovercards {
 	 *
 	 * @return {void}
 	 */
-	detach: Detach = () => {
+	detach: Detach = (): void => {
 		if ( ! this._hovercardRefs.length ) {
 			return;
 		}
@@ -970,6 +998,11 @@ export default class Hovercards {
 		this._hovercardRefs.forEach( ( hovercardRef ) => {
 			hovercardRef.ref.removeEventListener( 'mouseenter', hovercardRef.onEnter );
 			hovercardRef.ref.removeEventListener( 'mouseleave', hovercardRef.onLeave );
+			hovercardRef.ref.removeEventListener( 'click', hovercardRef.onClick );
+
+			// Clear the hovercard show timeout and remove the hovercard element.
+			clearInterval( this._showHovercardTimeoutIds.get( hovercardRef.id ) );
+			dc.getElementById( hovercardRef.id )?.remove();
 		} );
 
 		this._hovercardRefs = [];
