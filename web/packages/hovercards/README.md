@@ -240,6 +240,7 @@ interface ProfileData {
     jobTitle?: string;
     company?: string;
     headerImage?: string;
+    hideDefaultHeaderImage?: boolean;
     backgroundColor?: string;
     verifiedAccounts?: Record< 'label' | 'icon' | 'url' | 'type', string >[];
     contactInfo?: ContactInfo;

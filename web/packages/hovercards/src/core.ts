@@ -55,6 +55,7 @@ export interface ProfileData {
 	jobTitle?: string;
 	company?: string;
 	headerImage?: string;
+	hideDefaultHeaderImage?: boolean;
 	backgroundColor?: string;
 	verifiedAccounts?: VerifiedAccount[];
 	contactInfo?: ContactInfo;
@@ -326,6 +327,7 @@ export default class Hovercards {
 			jobTitle,
 			company,
 			headerImage,
+			hideDefaultHeaderImage,
 			verifiedAccounts = [],
 			payments,
 			contactInfo,
@@ -402,7 +404,9 @@ export default class Hovercards {
 
 		hovercard.innerHTML = `
 			<div class="gravatar-hovercard__inner">
-				${ headerImage ? `<div class="gravatar-hovercard__header-image"></div>` : '' }
+				<div class="gravatar-hovercard__header-image">
+					${ ! headerImage && ! hideDefaultHeaderImage ? `<img src="${ escUrl( avatarUrl ) }" alt=""/>` : '' }
+				</div>
 				<div class="gravatar-hovercard__header">
 					<a class="gravatar-hovercard__avatar-link" href="${ trackedProfileUrl }" target="_blank">
 						<img class="gravatar-hovercard__avatar" src="${ escUrl( avatarUrl ) }" width="104" height="104" alt="${ username }" />
