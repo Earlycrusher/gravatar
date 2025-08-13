@@ -368,9 +368,15 @@ export default class Hovercards {
 			}, [] )
 			.join( '' );
 
+		let headerImageHtml = '';
 		let ctaButtons = '';
 		let contactsDrawer = '';
 		let sendMoneyDrawer = '';
+
+		if ( headerImage || ! hideDefaultHeaderImage ) {
+			const img = ! headerImage ? `<img src="${ escUrl( avatarUrl ) }" alt=""/>` : '';
+			headerImageHtml = `<div class="gravatar-hovercard__header-image">${ img }</div>`;
+		}
 
 		if ( nonEmptyContacts.length || hasPayments ) {
 			if ( nonEmptyContacts.length ) {
@@ -404,9 +410,7 @@ export default class Hovercards {
 
 		hovercard.innerHTML = `
 			<div class="gravatar-hovercard__inner">
-				<div class="gravatar-hovercard__header-image">
-					${ ! headerImage && ! hideDefaultHeaderImage ? `<img src="${ escUrl( avatarUrl ) }" alt=""/>` : '' }
-				</div>
+				${ headerImageHtml }
 				<div class="gravatar-hovercard__header">
 					<a class="gravatar-hovercard__avatar-link" href="${ trackedProfileUrl }" target="_blank">
 						<img class="gravatar-hovercard__avatar" src="${ escUrl( avatarUrl ) }" width="104" height="104" alt="${ username }" />
