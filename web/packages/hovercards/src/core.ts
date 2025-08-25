@@ -55,6 +55,7 @@ export interface ProfileData {
 	jobTitle?: string;
 	company?: string;
 	headerImage?: string;
+	hideDefaultHeaderImage?: boolean;
 	backgroundColor?: string;
 	verifiedAccounts?: VerifiedAccount[];
 	contactInfo?: ContactInfo;
@@ -326,6 +327,7 @@ export default class Hovercards {
 			jobTitle,
 			company,
 			headerImage,
+			hideDefaultHeaderImage,
 			verifiedAccounts = [],
 			payments,
 			contactInfo,
@@ -366,9 +368,15 @@ export default class Hovercards {
 			}, [] )
 			.join( '' );
 
+		let headerImageHtml = '';
 		let ctaButtons = '';
 		let contactsDrawer = '';
 		let sendMoneyDrawer = '';
+
+		if ( headerImage || ! hideDefaultHeaderImage ) {
+			const img = `<img class="gravatar-hovercard__header-image-img" src="${ escUrl( avatarUrl ) }" alt=""/>`;
+			headerImageHtml = `<div class="gravatar-hovercard__header-image">${ ! headerImage ? img : '' }</div>`;
+		}
 
 		if ( nonEmptyContacts.length || hasPayments ) {
 			if ( nonEmptyContacts.length ) {
@@ -402,7 +410,7 @@ export default class Hovercards {
 
 		hovercard.innerHTML = `
 			<div class="gravatar-hovercard__inner">
-				${ headerImage ? `<div class="gravatar-hovercard__header-image"></div>` : '' }
+				${ headerImageHtml }
 				<div class="gravatar-hovercard__header">
 					<a class="gravatar-hovercard__avatar-link" href="${ trackedProfileUrl }" target="_blank">
 						<img class="gravatar-hovercard__avatar" src="${ escUrl( avatarUrl ) }" width="104" height="104" alt="${ username }" />
@@ -797,6 +805,7 @@ export default class Hovercards {
 							jobTitle: data.job_title,
 							company: data.company,
 							headerImage: data.header_image,
+							hideDefaultHeaderImage: data.hide_default_header_image,
 							backgroundColor: data.background_color,
 							verifiedAccounts: data.verified_accounts?.map( ( account: AccountData ) => ( {
 								type: account.service_type,
