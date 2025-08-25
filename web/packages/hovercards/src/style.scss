@@ -101,13 +101,13 @@ $font-sf-pro: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Robo
 		width: 100%;
 		transform: translateX(-50%);
 		overflow-y: hidden;
+	}
 
-		img {
-			width: 100%;
-			object-fit: cover;
-			transform: translateY(-30%);
-			filter: blur(40px);
-		}
+	.gravatar-hovercard__header-image-img {
+		width: 100%;
+		object-fit: cover;
+		transform: translateY(-30%);
+		filter: blur(40px);
 	}
 
 	.gravatar-hovercard__header {

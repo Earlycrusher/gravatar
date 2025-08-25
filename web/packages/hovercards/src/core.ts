@@ -374,8 +374,8 @@ export default class Hovercards {
 		let sendMoneyDrawer = '';
 
 		if ( headerImage || ! hideDefaultHeaderImage ) {
-			const img = ! headerImage ? `<img src="${ escUrl( avatarUrl ) }" alt=""/>` : '';
-			headerImageHtml = `<div class="gravatar-hovercard__header-image">${ img }</div>`;
+			const img = `<img class="gravatar-hovercard__header-image-img" src="${ escUrl( avatarUrl ) }" alt=""/>`;
+			headerImageHtml = `<div class="gravatar-hovercard__header-image">${ ! headerImage ? img : '' }</div>`;
 		}
 
 		if ( nonEmptyContacts.length || hasPayments ) {
@@ -805,6 +805,7 @@ export default class Hovercards {
 							jobTitle: data.job_title,
 							company: data.company,
 							headerImage: data.header_image,
+							hideDefaultHeaderImage: data.hide_default_header_image,
 							backgroundColor: data.background_color,
 							verifiedAccounts: data.verified_accounts?.map( ( account: AccountData ) => ( {
 								type: account.service_type,
