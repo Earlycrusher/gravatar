@@ -512,6 +512,7 @@ The following phrases are used:
 - `Send money`
 - `Sorry, we are unable to load this Gravatar profile.`
 - `Gravatar not found.`
+- `This profile is private.`
 - `Too Many Requests.`
 - `Internal Server Error.`
 - `Is this you?`
