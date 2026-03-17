@@ -841,6 +841,9 @@ export default class Hovercards {
 						let message = __t( this._i18n, 'Sorry, we are unable to load this Gravatar profile.' );
 
 						switch ( code ) {
+							case 403:
+								message = __t( this._i18n, 'This profile is private.' );
+								break;
 							case 404:
 								message = __t( this._i18n, 'Gravatar not found.' );
 								break;
